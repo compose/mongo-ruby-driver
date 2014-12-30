@@ -113,6 +113,7 @@ module Mongo
       parsed_options.split('&').reduce({}) do |options, option|
         key, value = option.split('=')
         strategy = OPTION_MAP[key]
+        raise BadURI.new(@match[0]) unless strategy
         add_option(strategy, value, options)
         options
       end
@@ -196,6 +197,9 @@ module Mongo
     def self.option(uri_key, name, extra = {})
       OPTION_MAP[uri_key] = { :name => name }.merge(extra)
     end
+
+    # Generic Options
+    option 'topology', :topology
 
     # Replica Set Options
     option 'replicaSet', :replica_set, :type => :replica_set
