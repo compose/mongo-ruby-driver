@@ -89,7 +89,7 @@ module Mongo
       @client = client
       @addresses = addresses
       @options = options.freeze
-      @topology = Topology.get(options)
+      @topology = Topology.get(options, addresses.length)
       @servers = addresses.map do |address|
         Server.new(address, options)
       end

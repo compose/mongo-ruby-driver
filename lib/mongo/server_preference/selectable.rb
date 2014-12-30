@@ -79,7 +79,7 @@ module Mongo
       #
       # @since 2.0.0
       def primary(candidates)
-        candidates.select{ |server| server.primary? || server.standalone? }
+        candidates.select{ |server| server.primary? || server.standalone? || server.mongos? }
       end
 
       private

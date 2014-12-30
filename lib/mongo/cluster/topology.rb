@@ -15,6 +15,7 @@
 require 'mongo/cluster/topology/replica_set'
 require 'mongo/cluster/topology/sharded'
 require 'mongo/cluster/topology/standalone'
+require 'mongo/cluster/topology/detect'
 
 module Mongo
   class Cluster
@@ -30,7 +31,8 @@ module Mongo
       OPTIONS = {
         replica_set: ReplicaSet,
         sharded: Sharded,
-        standalone: Standalone
+        standalone: Standalone,
+        detect: Detect
       }
 
       # Get the cluster topology for the provided options.
@@ -46,9 +48,9 @@ module Mongo
       # @return [ ReplicaSet, Sharded, Standalone ] The topology.
       #
       # @since 2.0.0
-      def self.get(options)
+      def self.get(options, seed_count = 1)
         return OPTIONS.fetch(options[:topology]) if options.has_key?(:topology)
-        options.has_key?(:replica_set) ? ReplicaSet : Standalone
+        options.has_key?(:replica_set) ? ReplicaSet : Detect
       end
     end
   end
