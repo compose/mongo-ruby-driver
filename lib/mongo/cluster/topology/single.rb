@@ -54,12 +54,14 @@ module Mongo
         # Initialize the topology with the options.
         #
         # @example Initialize the topology.
-        #   Single.new(options)
+        #   Single.new(seed, options)
         #
+        # @param [ String ] seed The seeded server.
         # @param [ Hash ] options The options.
         #
         # @since 2.0.0
-        def initialize(options)
+        def initialize(seed, options)
+          @seed = seed
           @options = options
         end
 
@@ -94,7 +96,13 @@ module Mongo
         #
         # @since 2.0.0
         def servers(servers, name = nil)
-          [ servers.detect { |server| !server.unknown? } ]
+          suitable_servers = servers.reject(&:unknown?).reject(&:arbiter?)
+          [
+            suitable_servers.detect {|server| server.address.seed == @seed } ||
+            suitable_servers
+              .sort_by(&:single_selection_priority).reverse
+              .first
+          ]
         end
 
         # A single topology is not sharded.

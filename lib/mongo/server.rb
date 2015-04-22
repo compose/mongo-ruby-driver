@@ -171,5 +171,17 @@ module Mongo
     def slave_ok?
       options[:slave_ok]
     end
+
+    # Priority of selection in single server topology
+    # 
+    # @example What's the priority of selecting a server.
+    #   server.single_selection_priority
+    # 
+    # @return [ Fixnum ] Priority of selection (higher is more likely to be selected.)
+    # 
+    # @since 2.0.3
+    def single_selection_priority
+      [secondary?, primary?, mongos?, standalone?].index(true) || 0
+    end
   end
 end
